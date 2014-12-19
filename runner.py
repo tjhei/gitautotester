@@ -280,19 +280,20 @@ if whattodo == "run-all":
         sha1 = l.split(" ")[0]
         if len(sha1)!=40:
             continue
-        print "discovered {}".format(sha1)
         if not h.have(sha1):
-            print "  testing"
+            print "testing {}".format(sha1)
             
             ret = subprocess.check_call("cd {0} && git checkout {1} -q".format(repodir, sha1),
                                         shell=True)
 
             ret = subprocess.check_call("cd {0} && git reset --hard -q && git clean -fd -q".format(repodir), shell=True)
             test(repodir, h, "")
-
         
         else:
-            pass
+            print "skipping {}".format(sha1)
+            result = h.data[sha1]
+            print "  ", result['good'], result['name']#, result['text']
+
 
     ret = subprocess.check_call("cd {0} && git reset --hard -q && git clean -fd -q".format(repodir), shell=True)
     ret = subprocess.check_call("cd {0} && git checkout master -q".format(repodir), shell=True)
