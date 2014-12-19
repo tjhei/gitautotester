@@ -32,10 +32,13 @@ def github_set_commit_status(user, repo, token, sha1, state="success", descripti
     req = urllib2.Request(url)
     req.add_header("Authorization", "token {0}".format(token))
     req.add_data(data)
-    res = urllib2.urlopen(req)
-    result = res.read()
-    #print res.getcode()
-    #print result
+    try:
+        res = urllib2.urlopen(req)
+        result = res.read()
+    except HTTPError:
+        print "setting github status failed"
+        print res.getcode()
+        print result
 
 def date_to_epoch(dt):
     epoch = datetime.utcfromtimestamp(0)
