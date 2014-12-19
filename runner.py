@@ -264,7 +264,11 @@ if whattodo == "delete":
 if whattodo == "run-all":
     ret = subprocess.check_call("cd {0} && git reset --hard -q && git clean -fd -q".format(repodir), shell=True)
     ret = subprocess.check_call("cd {0} && git checkout master -q".format(repodir), shell=True)
-    ret = subprocess.check_call("cd {0} && git pull origin -q".format(repodir), shell=True)
+    
+    try:
+        ret = subprocess.check_output("cd {0} && git pull origin -q".format(repodir), shell=True)
+    except subprocess.CalledProcessError:
+        print "pull failed, ignoring"
 
     answer = subprocess.check_output("cd {0} && git log --format=oneline --first-parent -n {1}".format(repodir, n_old_tests),
                                      shell=True,stderr=subprocess.STDOUT)
