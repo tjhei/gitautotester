@@ -45,17 +45,8 @@ def text_to_html(text):
     lines = text.split("\n")
     outlines = []
     for l in lines:
-        status = "neutral"
-        if re.match(r'^([ ]*)0 Compiler errors$', l):
-            status = "good"
-        elif re.match(r'^([ ]*)(\d+) Compiler errors$', l):
-            status = "bad"
-        elif re.match(r'^100% tests passed, 0 tests failed out of (\d+)$', l):
-            status = "good"
-        elif re.match(r'^(\d+)% tests passed, (\d+) tests failed out of (\d+)$', l):
-            status = "bad"
-        elif re.match(r'.*FAILED', l):
-            status = "bad"
+        status = status_of_output_line(l)
+        assert(status in ["good", "bad", "neutral"])
             
         if status=="good":
             outlines.append("<p style='background-color:{0}'>{1}</p>".format(color_green, l))
@@ -187,6 +178,17 @@ class history:
         e = dict(sha1=sha, time=time, name=name, good=good, text=text)
         self.data[sha] = e
 
+
+def is_successful(lines):
+    good = True
+    for l in lines:
+        status = status_of_output_line(l)
+        if status=="bad":
+            good = False
+
+    return good
+
+
 def test(repodir, h, name=""):
     sha1 = subprocess.check_output("cd {0};git rev-parse HEAD".format(repodir),
                                    shell=True).replace("\n","")
@@ -260,7 +262,7 @@ if whattodo == "run-all":
     ret = subprocess.check_call("cd {0} && git checkout master -q".format(repodir), shell=True)
     ret = subprocess.check_call("cd {0} && git pull origin -q".format(repodir), shell=True)
 
-    answer = subprocess.check_output("cd {0} && git log --format=oneline --first-parent -n 10".format(repodir),
+    answer = subprocess.check_output("cd {0} && git log --format=oneline --first-parent -n {1}".format(repodir, n_old_tests),
                                      shell=True,stderr=subprocess.STDOUT)
     lines = answer.split("\n")
     for l in lines[::-1]:

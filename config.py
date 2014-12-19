@@ -16,6 +16,9 @@ github_user = "geodynamics"
 # name of the repo on github
 github_repo = "aspect"
 
+# number of tests to go back in time when doing "run-all" default 10
+n_old_tests = 10
+
 # if a user that is_allowed() posts a comment that has
 # has_hotword(text) return True, the PR is tested
 def has_hotword(text):
@@ -36,24 +39,19 @@ def is_allowed(username):
 def make_link(sha):
     return "http://www.math.clemson.edu/~heister/aspect-logs/{}/".format(sha)
 
-def is_successful(lines):
-    good = True
-    for l in lines:
-        r = re.match("^\s+(\d+) Compiler errors$", l)
-        if r:
-            n = int(r.group(1))
-            if n>0:
-                good = False
-        r = re.match("^\d+% tests passed, (\d+) tests failed out of \d+$", l)
-        if r:
-            n = int(r.group(1))
-            if n>0:
-                good = False
-        r = re.match("^tests: \d+ / \d+ FAILED$", l)
-        if r:
-            good = False
-        r = re.match("^Manual: FAILED$", l)
-        if r:
-            good = False
 
-    return good
+# for a given line l of the test output return
+# "good", "bad", or "neutral"
+def status_of_output_line(l):
+    status = "neutral"
+    if re.match(r'^([ ]*)0 Compiler errors$', l):
+        status = "good"
+    elif re.match(r'^([ ]*)(\d+) Compiler errors$', l):
+        status = "bad"
+    elif re.match(r'^100% tests passed, 0 tests failed out of (\d+)$', l):
+        status = "good"
+    elif re.match(r'^(\d+)% tests passed, (\d+) tests failed out of (\d+)$', l):
+        status = "bad"
+    elif re.match(r'.*FAILED', l):
+        status = "bad"
+    return status
