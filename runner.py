@@ -76,7 +76,12 @@ class history:
         self.timeformat = "%Y-%m-%d %H:%M:%S"
 
     def load(self):
-        f = open(self.dbname, 'r')
+        try:
+            f = open(self.dbname, 'r')
+        except IOError:
+            self.save()
+            return
+
         text = f.read()
         f.close()
         self.data = js.loads(text)
