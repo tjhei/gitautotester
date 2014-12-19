@@ -1,5 +1,9 @@
 # timo.heister@gmail.com
 
+# project configuration is in config.py
+# test.sh is run when we want to test the current revision
+
+
 import random
 import re
 import os

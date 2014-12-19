@@ -8,7 +8,7 @@ if os.path.isfile('token.txt'):
     token = open('token.txt').read().replace("\n","")
 
 # directory where the aspect git repo sits
-repodir = "~/aspect"
+repodir = os.getcwd()+"/aspect"
 
 # name of the user/organization on github
 github_user = "geodynamics"
