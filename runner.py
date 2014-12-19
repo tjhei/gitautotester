@@ -89,7 +89,7 @@ class history:
 
     def save(self):
         text = js.dumps(self.data)
-        print "saving {0} entries...".format(len(self.data))
+        #print "saving {0} entries...".format(len(self.data))
         f = open(self.dbname, 'w')
         f.write(text)
         f.close()
@@ -175,6 +175,7 @@ class history:
             for k in self.data.keys():
                 if k.startswith(sha):
                     self.data.pop(k)
+                    print "1 test result deleted"
                     return
         else:
             print "ERROR: sha1 is not unique."
