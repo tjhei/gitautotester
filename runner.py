@@ -17,7 +17,7 @@ color_red = "#ff0000"
 
 
 
-def github_commit_status(user, repo, token, sha1, state="success", description="", link=""):
+def github_set_commit_status(user, repo, token, sha1, state="success", description="", link=""):
     #pending, success, error, failure
 
     description = description[0:min(len(description),140)] #github doesn't like too long description
@@ -351,7 +351,7 @@ if whattodo == "do-pullrequests":
             
             if allowed:
                 print "testing..."
-                github_commit_status(github_user, github_repo, token, sha, "pending", "tester is running")
+                github_set_commit_status(github_user, github_repo, token, sha, "pending", "tester is running")
 
                 ret = subprocess.check_call("cd {0} && git reset --hard -q && git clean -fd -q".format(repodir), shell=True)
                 ret = subprocess.check_call("cd {0} && git fetch https://github.com/{1}/{2} refs/pull/{3}/head -q".format(repodir, github_user, github_repo, pr['number']), shell=True)
@@ -365,9 +365,9 @@ if whattodo == "do-pullrequests":
                 link = make_link(sha)
 
                 if ret:
-                    github_commit_status(github_user, github_repo, token, sha, "success", text, link)
+                    github_set_commit_status(github_user, github_repo, token, sha, "success", text, link)
                 else:
-                    github_commit_status(github_user, github_repo, token, sha, "failure", text, link)
+                    github_set_commit_status(github_user, github_repo, token, sha, "failure", text, link)
                 ret = subprocess.check_call("cd {0} && git checkout master -q".format(repodir),
                                         shell=True)
 
