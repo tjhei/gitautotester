@@ -9,7 +9,8 @@ setup:
 
 ./setup.sh
 
-cd docker && docker build -t tjhei/aspect-tester . && cd .. && docker create --name="tester" -v `pwd`:/aspect-tester tjhei/aspect-tester
+cd docker && docker build -t tjhei/aspect-tester . && cd .. 
+
 
 
 delete:
@@ -29,24 +30,6 @@ run-all
 
 
 
-
-
-
-docker start -a tester $CMD
-
-
-
-docker exec tester
-
- docker run -v `pwd`:/aspect-tester  tjhei/aspect-tester 
-
-
-docker run -v `pwd`:/aspect-tester  tjhei/aspect-tester 
-
-exec?start?
-
-
-
 todo:
 work without token.txt
 
@@ -63,12 +46,7 @@ git clone https://github.com/tjhei/aspect-admin.git
 cd aspect-admin
 git checkout docker
 
-cd docker && docker build -t tjhei/aspect-tester . && cd .. && docker run -v `pwd`:/aspect-tester  tjhei/aspect-tester 
 
-
-docker run -v `pwd`:/aspect-tester  tjhei/aspect-tester 
-
-mount . as ~/aspect-tester
 
 
 
