@@ -1,4 +1,4 @@
-FROM tjhei/deal-dev
+FROM tjhei/deal82
 
 MAINTAINER timo.heister@gmail.com
 

@@ -20,8 +20,9 @@ rm -rf $DIR
 mkdir $DIR
 cd $DIR
 echo hi from `pwd`
-cmake -G "Ninja" ../aspect #>/dev/null 2>&1
-nice ctest -S ~/aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 4 >$logfile 2>&1
+cmake -G "Ninja" ../aspect >$logfile 2>&1
+nice ninja >>$logfile 2>&1
+nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 4 >>$logfile 2>&1
 grep "Compiler errors" $logfile >>$summary
 #grep "Compiler warnings" $logfile >>$summary
 #if [ "$build" != "clang" ]
