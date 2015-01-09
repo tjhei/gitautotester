@@ -28,7 +28,7 @@ dockercmd()
 cmd=$1
 mount="-v `pwd`:/aspect-tester"
 echo "mount: $mount cmd: '$cmd'"
-docker run --rm=true $mount tjhei/deal82withclang /bin/bash -c $cmd
+docker run --rm=true $mount tjhei/deal82withclang /bin/bash -c "$cmd"
 }
 
 
