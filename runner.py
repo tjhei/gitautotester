@@ -11,7 +11,7 @@ import sys
 import subprocess
 import json as js
 from datetime import datetime
-import urllib2, urllib
+import urllib2
 
 from config import *
 
@@ -35,10 +35,10 @@ def github_set_commit_status(user, repo, token, sha1, state="success", descripti
     try:
         res = urllib2.urlopen(req)
         result = res.read()
-    except HTTPError:
-        print "setting github status failed"
-        print res.getcode()
-        print result
+    except urllib2.HTTPError as e:
+        print "setting github status failed: HTTP error ", e.code
+    except urllib2.URLError as e:
+        print "setting github status failed: failure ", e.reason
 
 def date_to_epoch(dt):
     epoch = datetime.utcfromtimestamp(0)
