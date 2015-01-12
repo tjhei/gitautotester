@@ -1,7 +1,7 @@
 #!/bin/bash
 
 submit="OFF"
-#submit="ON"
+submit="ON"
 sha=$1
 name=$2
 
@@ -12,7 +12,7 @@ logfile=$2
 submit=$3
 cmake -G "Ninja" ../aspect >$logfile 2>&1
 nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 4 >>$logfile 2>&1
+nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
 }
 
 run_gccpetsc()
@@ -22,7 +22,7 @@ logfile=$2
 submit=$3
 cmake -G "Ninja" -D ASPECT_USE_PETSC=ON ../aspect >$logfile 2>&1
 nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 4 >>$logfile 2>&1
+nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
 }
 
 run_clang()
@@ -32,7 +32,7 @@ logfile=$2
 submit=$3
 cmake -D DEAL_II_DIR=/root/deal.II/installedclang -G "Ninja" ../aspect >$logfile 2>&1
 clang nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 4 >>$logfile 2>&1
+nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
 }
 
 output() {
@@ -49,7 +49,7 @@ DIR=build-$build
 rm -rf $DIR
 mkdir $DIR
 cd $DIR
-echo hi from `pwd`
+#echo hi from `pwd`
 
 eval run_$build $build$name $logfile $submit
 
