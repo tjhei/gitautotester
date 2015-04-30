@@ -214,6 +214,8 @@ def test(repodir, h, name=""):
         print "failed"
         return
 
+    ret = subprocess.check_call("cd {0} && git reset --hard -q && git clean -fd -q".format(repodir), shell=True)
+
     print answer
 
     good = is_successful(answer.split("\n"))
