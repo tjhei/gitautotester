@@ -10,9 +10,9 @@ run_gcc()
 desc=$1
 logfile=$2
 submit=$3
-cmake -G "Ninja" ../aspect >$logfile 2>&1
-nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
+cmake -G "Ninja" ../aspect >$logfile 2>&1 && \
+nice ninja >>$logfile 2>&1 && \
+nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
 }
 
 run_gccpetsc()
@@ -20,9 +20,9 @@ run_gccpetsc()
 desc=$1
 logfile=$2
 submit=$3
-cmake -G "Ninja" -D ASPECT_USE_PETSC=ON ../aspect >$logfile 2>&1
-nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
+cmake -G "Ninja" -D ASPECT_USE_PETSC=ON ../aspect >$logfile 2>&1 && \
+nice ninja >>$logfile 2>&1 && \
+nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
 }
 
 run_clang()
@@ -30,9 +30,9 @@ run_clang()
 desc=$1
 logfile=$2
 submit=$3
-cmake -D DEAL_II_DIR=/root/deal.II/installedclang -G "Ninja" ../aspect >$logfile 2>&1
-clang nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
+cmake -D DEAL_II_DIR=/root/deal.II/installedclang -G "Ninja" ../aspect >$logfile 2>&1 && \
+nice ninja >>$logfile 2>&1 && \
+nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
 }
 
 output() {
@@ -83,6 +83,7 @@ cp manual/manual.log $basepath/logs/$sha/manual.log
 ) >>$basepath/logs/$sha/summary
  
 
+sed -i 's/[[:space:]]*0 Compiler errors/ok/' $basepath/logs/$sha/summary
 sed -i 's/\([0-9]*\)% tests passed, 0 tests failed out of \([0-9]*\)/tests: \2 passed/' $basepath/logs/$sha/summary 
 
 sed -i 's/\([0-9]*\)% tests passed, \([0-9]*\) tests failed out of \([0-9]*\)/tests: \2 \/ \3 FAILED/' $basepath/logs/$sha/summary 
