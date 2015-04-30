@@ -24,9 +24,12 @@ color_red = "#ff0000"
 def github_set_commit_status(user, repo, token, sha1, state="success", description="", link=""):
     #pending, success, error, failure
 
+    if (github_context == ""):
+        return
+
     description = description[0:min(len(description),140)] #github doesn't like too long description
 
-    data = js.dumps({'state' : state, 'context' : 'default', 'description' : description, 'target_url' : link})
+    data = js.dumps({'state' : state, 'context' : github_context, 'description' : description, 'target_url' : link})
     url = "https://api.github.com/repos/{0}/{1}/statuses/{2}".format(github_user, github_repo, sha1)
 
     req = urllib2.Request(url)

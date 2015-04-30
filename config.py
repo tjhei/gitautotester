@@ -16,6 +16,9 @@ github_user = "geodynamics"
 # name of the repo on github
 github_repo = "aspect"
 
+# github status context (""=disabled)
+github_context = ""
+
 # number of tests to go back in time when doing "run-all" default 10
 n_old_tests = 10
 
