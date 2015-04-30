@@ -397,7 +397,7 @@ if whattodo == "do-pullrequests":
 
 if whattodo == "test":
     #arg1
-    r = re.match("^(\w+)/(\w+):([\w-]+)$", arg1)
+    r = re.match("^(\w+)/(\w+):(.+)$", arg1)
     if r:
         user = r.group(1)
         repo = r.group(2)
