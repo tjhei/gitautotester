@@ -310,7 +310,7 @@ if whattodo == "pullrequests":
     print "found {0} pull requests...".format(len(data))
     for pr in data:
         by = pr['user']['login']
-        title = pr['title']
+        title = pr['title'].encode("utf-8")
         sha = pr['head']['sha']
         print "PR{}: {} '{}' by {}".format(pr['number'], sha, title, by)
         print "  use: python runner.py test {0}:{1}".format(pr['head']['repo']['full_name'],pr['head']['ref'])
@@ -345,7 +345,7 @@ if whattodo == "do-pullrequests":
     print "found {0} pull requests...".format(len(data))
     for pr in data:
         by = pr['user']['login']
-        title = pr['title']
+        title = pr['title'].encode("utf-8")
         sha = pr['head']['sha']
         print "PR{}: {} '{}' by {}".format(pr['number'], sha, title, by)
         #print "  use: python runner.py test {0}:{1}".format(pr['head']['repo']['full_name'],pr['head']['ref'])
