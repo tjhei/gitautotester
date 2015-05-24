@@ -28,7 +28,7 @@ def has_hotword(text):
 
 # return true if user is trusted
 def is_allowed(username):
-    trusted = ['tjhei', 'bangerth', 'jdannberg', 'gassmoeller']
+    trusted = ['tjhei', 'bangerth', 'jdannberg', 'gassmoeller', 'ian-r-rose']
 
     if username in trusted:
         return True
