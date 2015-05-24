@@ -10,9 +10,9 @@ run_gcc()
 desc=$1
 logfile=$2
 submit=$3
-cmake -G "Ninja" ../aspect >$logfile 2>&1 && \
-nice ninja >>$logfile 2>&1 && \
-nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
+cmake -G "Ninja" -D ASPECT_RUN_ALL_TESTS=ON ../aspect || { echo "configure FAILED"; return; }
+nice ninja || { echo "build FAILED"; return; }
+nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 || { echo "test FAILED"; return; }
 }
 
 run_gccpetsc()
@@ -20,9 +20,9 @@ run_gccpetsc()
 desc=$1
 logfile=$2
 submit=$3
-cmake -G "Ninja" -D ASPECT_USE_PETSC=ON ../aspect >$logfile 2>&1 && \
-nice ninja >>$logfile 2>&1 && \
-nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
+cmake -G "Ninja" -D ASPECT_USE_PETSC=ON -D ASPECT_RUN_ALL_TESTS=ON ../aspect || { echo "configure FAILED"; return; }
+nice ninja || { echo "build FAILED"; return; }
+nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 || { echo "test FAILED"; return; }
 }
 
 run_clang()
@@ -30,9 +30,9 @@ run_clang()
 desc=$1
 logfile=$2
 submit=$3
-cmake -D DEAL_II_DIR=/root/deal.II/installedclang -G "Ninja" ../aspect >$logfile 2>&1 && \
-nice ninja >>$logfile 2>&1 && \
-nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 10 >>$logfile 2>&1
+cmake -D DEAL_II_DIR=/root/deal.II/installedclang -G "Ninja" -D ASPECT_RUN_ALL_TESTS=ON ../aspect || { echo "configure FAILED"; return; }
+nice ninja || { echo "build FAILED"; return; }
+nice ctest --output-on-failure -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$desc" -Dsubmit=$submit -V -j 10 || { echo "test FAILED"; return; }
 }
 
 output() {
@@ -51,9 +51,10 @@ mkdir $DIR
 cd $DIR
 #echo hi from `pwd`
 
-eval run_$build $build$name $logfile $submit
+eval run_$build $build$name $logfile $submit >$logfile 2>&1
 
-grep "Compiler errors" $logfile >>$summary
+grep "FAILED" $logfile | grep -v "FAILED: /" | grep -v "The following tests FAILED" | grep -v "FAILED: cd /" >>$summary
+#grep "Compiler errors" $logfile >>$summary
 #grep "Compiler warnings" $logfile >>$summary
 #if [ "$build" != "clang" ]
 #then
@@ -87,6 +88,9 @@ sed -i 's/[[:space:]]*0 Compiler errors/ok/' $basepath/logs/$sha/summary
 sed -i 's/\([0-9]*\)% tests passed, 0 tests failed out of \([0-9]*\)/tests: \2 passed/' $basepath/logs/$sha/summary 
 
 sed -i 's/\([0-9]*\)% tests passed, \([0-9]*\) tests failed out of \([0-9]*\)/tests: \2 \/ \3 FAILED/' $basepath/logs/$sha/summary 
+
+sed 's#$# <br/>#' $basepath/logs/$sha/summary > $basepath/logs/$sha/index.html
+sed -i 's#^BUILD \(.*\):#<a href="\1">BUILD \1</a>#' $basepath/logs/$sha/index.html
 
 cat $basepath/logs/$sha/summary
 
