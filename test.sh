@@ -1,63 +1,43 @@
 #!/bin/bash
 
-submit="OFF"
-#submit="ON"
-sha=$1
-name=$2
-
-output() {
-basepath=$1
-build=$2
-sha=$3
-name=$4
-logfile=$basepath/logs/$sha/$build
-summary=$basepath/logs/$sha/summary
-
-echo "BUILD $build:" >>$summary
-cd $basepath
-DIR=build-$build
-rm -rf $DIR
-mkdir $DIR
-cd $DIR
-echo hi from `pwd`
-cmake -G "Ninja" ../aspect >$logfile 2>&1
-nice ninja >>$logfile 2>&1
-nice ctest -S ../aspect/tests/run_testsuite.cmake -DDESCRIPTION="$build$name" -Dsubmit=$submit -V -j 4 >>$logfile 2>&1
-grep "Compiler errors" $logfile >>$summary
-#grep "Compiler warnings" $logfile >>$summary
-#if [ "$build" != "clang" ]
-#then
-  grep "tests passed" $logfile >>$summary
-#fi
-}
-
+TESTS="step-22 tablehandler test_assembly test_poisson test_hp"
+sha=`cd dealii;git rev-parse HEAD`
+desc=`cd dealii;git rev-parse --short HEAD;git describe --exact-match HEAD 2>/dev/null || echo "-"`
+time=`cd dealii;git show --quiet --format=%ci HEAD`
 basepath=`pwd`
+
+export DEAL_II_NUM_THREADS=1
 
 mkdir -p $basepath/logs/$sha
 rm -f $basepath/logs/$sha/*
 
-build="clang"
-#output $basepath $build $sha $name
+cd $basepath
+DIR=build
+logfile=$basepath/logs/$sha/build
 
-build="gcc"
-output $basepath $build $sha $name
+#rm -rf $DIR
+mkdir -p $DIR
+cd $DIR
+echo hi from `pwd` >$logfile
+cmake -G "Ninja" -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=`pwd`/../install  ../dealii >>$logfile 2>&1
+nice ninja install >>$logfile 2>&1
 
-build="gccpetsc"
-#output $basepath $build $sha $name
+cd ..
 
-(
-cd $basepath/aspect/doc/ && exit 0 &&
-make manual.pdf >/dev/null 2>&1 &&
-echo "Manual: OK" || 
-echo "Manual: FAILED";
-git checkout -f -q -- manual.pdf;
-cp manual/manual.log $basepath/logs/$sha/manual.log
-) >>$basepath/logs/$sha/summary
- 
-
-sed -i 's/\([0-9]*\)% tests passed, 0 tests failed out of \([0-9]*\)/tests: \2 passed/' $basepath/logs/$sha/summary 
-
-sed -i 's/\([0-9]*\)% tests passed, \([0-9]*\) tests failed out of \([0-9]*\)/tests: \2 \/ \3 FAILED/' $basepath/logs/$sha/summary 
+for test in $TESTS ; do
+  cd $test
+  echo "** working on $test" >>$logfile
+  cmake -D DEAL_II_DIR=../install . >/dev/null 2>>$logfile
+  echo $sha >tmp
+  echo $test >>tmp
+  echo $desc >>tmp
+  echo $time >>tmp
+  for a in {1..5}; do
+    make run 2>/dev/null | grep "|" | grep -v "no. calls" | grep -v "Total CPU time" | grep -v "Total wallclock time" >>tmp
+  done
+  cd ..
+  cat $test/tmp | python render.py record >> $basepath/logs/$sha/summary
+done
 
 cat $basepath/logs/$sha/summary
 
