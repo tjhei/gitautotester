@@ -1,3 +1,15 @@
+/build/
+/dealii/
+/install/
+/logs/
 /test.db
-/config.py~
-/runner.py~
+/*~
+/*/CMakeCache.txt
+/*/CMakeFiles/
+/*/*vtk
+/*/Makefile
+/*/cmake_install.cmake
+/*/tmp
+/**/*~
+
+
