@@ -27,13 +27,14 @@ cd ..
 for test in $TESTS ; do
   cd $test
   echo "** working on $test" >>$logfile
+  rm -fr CMakeCache.txt CMakeFiles Makefile
   cmake -D DEAL_II_DIR=../install . >/dev/null 2>>$logfile
   echo $sha >tmp
   echo $test >>tmp
   echo $desc >>tmp
   echo $time >>tmp
   for a in {1..5}; do
-    make run 2>/dev/null | grep "|" | grep -v "no. calls" | grep -v "Total CPU time" | grep -v "Total wallclock time" >>tmp
+    make run 2>>$logfile | grep "|" | grep -v "no. calls" | grep -v "Total CPU time" | grep -v "Total wallclock time" >>tmp
   done
   cd ..
   cat $test/tmp | python render.py record >> $basepath/logs/$sha/summary
