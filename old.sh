@@ -13,8 +13,8 @@ patch -R -p3 <patches/821andbefore.patch
 ./test.sh
 
 # not tested:
-# not working because dealii/deal.II directory
 cd dealii;git checkout v8.1.0;cd ..
+patch -p1 <patches/810andbefore.patch
 ./test.sh
 
 # not tested:
