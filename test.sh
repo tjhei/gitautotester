@@ -15,10 +15,14 @@ cd $basepath
 DIR=build
 logfile=$basepath/logs/$sha/build
 
+echo "Testing $sha - $desc" | tee $logfile 
+
+
+
 #rm -rf $DIR
 mkdir -p $DIR
 cd $DIR
-echo hi from `pwd` >$logfile
+echo hi from `pwd` >>$logfile
 cmake -G "Ninja" -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=`pwd`/../install  ../dealii >>$logfile 2>&1 && nice ninja install >>$logfile 2>&1 || exit -1
 
 cd ..
