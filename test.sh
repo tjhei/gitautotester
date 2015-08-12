@@ -3,7 +3,7 @@
 TESTS="step-22 tablehandler test_assembly test_poisson test_hp"
 sha=`cd dealii;git rev-parse HEAD`
 desc="`cd dealii;git rev-parse --short HEAD;` `cd dealii;git describe --exact-match HEAD 2>/dev/null`"
-time=`cd dealii;git show --quiet --format=%cD HEAD`
+time=`cd dealii;git show --quiet --format=%cD HEAD | head -n 1`
 basepath=`pwd`
 
 export DEAL_II_NUM_THREADS=1
