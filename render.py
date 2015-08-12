@@ -69,7 +69,10 @@ class DB:
         # sort by time:
         keys = []
         for x in self.data.values():
-            keys.append((x['sha1'], parser.parse(x['time'])))
+            try:
+                keys.append((x['sha1'], parser.parse(x['time'])))
+            except ValueError:
+                print "could not parse date for {}".format(x['sha1'])
         
         keys = [ k[0] for k in sorted(keys, key=lambda x: x[1], reverse=True) ]
         
