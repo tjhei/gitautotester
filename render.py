@@ -4,6 +4,7 @@ import os
 import sys
 import fileinput
 import json as js
+from dateutil import parser
 
 def load_ref():
     ref = {}
@@ -64,22 +65,30 @@ class DB:
     def render(self):
         timeshatable={}
         series={}
+
+        # sort by time:
+        keys = []
+        for x in self.data.values():
+            keys.append((x['sha1'], parser.parse(x['time'])))
         
-        for sha in self.data:
+        keys = [ k[0] for k in sorted(keys, key=lambda x: x[1], reverse=True) ]
+        
+        for sha in keys:
             x = self.data[sha]
-            timeshatable[x['time']] = x['desc']
+            timedate = parser.parse(x['time']).isoformat()
+            timeshatable[timedate] = x['desc']
             for name in x['record']:
-                time = x['record'][name]
+                seconds = x['record'][name]
                 if not name in series:
                     series[name]=[]
-                series[name].append( [ x['time'], time ] )
+                series[name].append( [ timedate, seconds ] )
             
         print """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
         <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-                <title>Highcharts Example</title>
+                <title>deal.II automated benchmarks</title>
                 
                 
                 <!-- 1. Add these JavaScript inclusions in the head of your page -->
@@ -100,10 +109,7 @@ class DB:
             print "ref[\"{}\"]={};".format(s, ref[s])
 
         print """
-                $(document).ready(function() {
-                        
-
-//                      $.get('data.csv', function(csv) {
+                $(document).ready(function() {                      
                             $('#container').highcharts({
                                 chart: {
                 type: 'line',
