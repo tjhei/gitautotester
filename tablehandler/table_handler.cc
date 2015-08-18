@@ -33,7 +33,7 @@ using namespace dealii;
 
 int main ()
 {
-  TimerOutput timer (std::cout, TimerOutput::summary, TimerOutput::cpu_times);
+  TimerOutput timer (std::cout, TimerOutput::summary, TimerOutput::wall_times);
   deallog.depth_console(0);
   deallog.threshold_double(1.e-10);
 

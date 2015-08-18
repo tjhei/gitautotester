@@ -476,7 +476,7 @@ namespace Step22
     fe (FE_Q<dim>(degree+1), dim,
         FE_Q<dim>(degree), 1),
     dof_handler (triangulation),
-    timer (std::cout, TimerOutput::summary, TimerOutput::cpu_times)
+    timer (std::cout, TimerOutput::summary, TimerOutput::wall_times)
   {}
 
 
