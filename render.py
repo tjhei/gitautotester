@@ -131,7 +131,8 @@ series: [
 
             for d in series[s]:
                 ref_value = ref[s] if s in ref else 1.0
-                print "[Date.parse(\"{}\"), {}],".format(d[0], d[1]/ref_value*100)
+                v = d[1] #/ref_value*100 - 100
+                print "[Date.parse(\"{}\"), {}],".format(d[0], v)
             print "] },"
 
         print """
@@ -151,7 +152,7 @@ series: [
             },
             yAxis: {
                 title: {
-                    text: 'slowdown (%)'
+                    text: 'time (s)'
                 },
                 plotLines: [{
                     value: 0,
