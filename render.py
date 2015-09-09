@@ -5,6 +5,7 @@ import sys
 import fileinput
 import json as js
 from dateutil import parser
+import datetime
 
 def load_ref():
     ref = {}
@@ -129,7 +130,9 @@ series: [
             print "name: '{}',".format(s)
             print "data: ["
 
-            for d in series[s]:
+            sorted_series = sorted(series[s], key=lambda x: parser.parse(x[0]))
+
+            for d in sorted_series:
                 ref_value = ref[s] if s in ref else 1.0
                 v = d[1] #/ref_value*100 - 100
                 print "[Date.parse(\"{}\"), {}],".format(d[0], v)
@@ -146,9 +149,6 @@ series: [
             /*dateTimeLabelFormats: { // don't display the dummy year
                 month: '%e. %b',
                 year: '%b'*/
-            },
-            title: {
-                text: 'Date'
             },
             yAxis: {
                 title: {
@@ -197,14 +197,22 @@ series: [
                             });
 //                      });
                         
-                        
+             setTimeout(function(){
+chart = $('#container').highcharts();
+chart.xAxis[0].setExtremes(Date.parse("2015-07-28T13:45:48-05:00"),chart.xAxis[0].getExtremes().dataMax); 
+},2000);           
                 });
+
                 </script>
                 
         </head>
         <body>
-                
-                <!-- 3. Add the container -->
+<a href="https://www.dealii.org">deal.II</a> performance benchmarks, see 
+<a href="https://www.dealii.org/developer/developers/testsuite.html">testsuite documentation</a> for more info.<br>
+                <p>Last update: """
+        print str(datetime.datetime.now())
+        print """</p>
+
                 <div id="container" style="width: 1200px; height: 600px; margin: 0 auto"></div>
                 
                                 
