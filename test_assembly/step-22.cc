@@ -20,6 +20,10 @@
 
 // @sect3{Include files}
 
+#include "../perf.h"
+#include <deal.II/base/multithread_info.h>
+
+
 // As usual, we start by including
 // some well-known files:
 #include <deal.II/base/quadrature_lib.h>
@@ -476,7 +480,7 @@ namespace Step22
     fe (FE_Q<dim>(degree+1), dim,
         FE_Q<dim>(degree), 1),
     dof_handler (triangulation),
-    timer (std::cout, TimerOutput::summary, TimerOutput::wall_times)
+    timer (std::cout, TimerOutput::summary, TimerOutput::cpu_times)
   {}
 
 
@@ -581,7 +585,7 @@ namespace Step22
     timer.exit_section("distribute dofs");
 
     timer.enter_section("renumbering");
-    DoFRenumbering::Cuthill_McKee (dof_handler);
+    //DoFRenumbering::Cuthill_McKee (dof_handler);
 
     std::vector<unsigned int> block_component (dim+1,0);
     block_component[dim] = 1;
@@ -1210,6 +1214,7 @@ namespace Step22
   void StokesProblem<dim>::run ()
   {
     {
+      Instrument ii("mesh");
       std::vector<unsigned int> subdivisions (dim, 1);
       subdivisions[0] = 4;
 
@@ -1244,7 +1249,7 @@ namespace Step22
     // before solving for the first time. In
     // 3D, there are going to be more degrees
     // of freedom, so we refine less there:
-    triangulation.refine_global (8-dim);
+    triangulation.refine_global (5-dim);
 
     // As first seen in step-6, we cycle over
     // the different refinement levels and
@@ -1259,6 +1264,7 @@ namespace Step22
 
         //if (refinement_cycle > 0)
         {
+	  Instrument ii("refine");
           timer.enter_section("refine");
           refine_mesh ();
           refine_mesh ();
@@ -1267,13 +1273,22 @@ namespace Step22
           timer.exit_section("refine");
         }
 
-        //timer.enter_section("setup");
-        setup_dofs ();
+        //timer.enter_section("setup"
+	{
+	  Instrument ii("setup_dofs");
+	  setup_dofs ();
+	}
+    
         //timer.exit_section("setup");
 
         std::cout << "   Assembling..." << std::endl << std::flush;
         timer.enter_section("assembly");
+	{
+	      Instrument ii("assembly");
+  
         assemble_system ();
+	}
+	
         timer.exit_section("assembly");
 
         std::cout << "   Solving..." << std::flush;
@@ -1304,11 +1319,22 @@ int main ()
     {
       using namespace dealii;
       using namespace Step22;
+      MultithreadInfo::set_thread_limit(1);
+      
 
       deallog.depth_console (0);
 
+
+
+
+      Instrument ii("constructor");
       StokesProblem<2> flow_problem(1);
+      ii.stop();
+      
       flow_problem.run ();
+
+      Instrument::summary();
+      
     }
   catch (std::exception &exc)
     {
