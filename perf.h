@@ -1,14 +1,14 @@
+#ifndef _perf_h_
+#define _perf_h_
 
 #include <valgrind/callgrind.h>
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
 
-
 class Instrument
 {
   public:
-
     Instrument(const char* name)
 		    :
 		    name (name),
@@ -42,20 +42,11 @@ class Instrument
     ~Instrument()
       {
 	stop();
-      }
-
-
-    static void summary()
-      {
-	//	system("ls log*");
-	//system("cat log* | egrep 'Trigger|summary'");
-	//system("rm log*");//
-      }
-    
+      }    
 
   private:
     const char* name;
     bool stopped;
 };
 
-
+#endif

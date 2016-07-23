@@ -581,19 +581,30 @@ namespace Step22
     system_matrix.clear ();
 
     timer.enter_section("distribute dofs");
-    dof_handler.distribute_dofs (fe);
+    {
+      Instrument ii("setup:distribute");
+      dof_handler.distribute_dofs (fe);
+    }
+
     timer.exit_section("distribute dofs");
 
     timer.enter_section("renumbering");
-    //DoFRenumbering::Cuthill_McKee (dof_handler);
+    {
+      Instrument ii("setup:cuthill_mckee");
+      DoFRenumbering::Cuthill_McKee (dof_handler);
+    }
 
+
+    Instrument ii("setup:component_wise");
     std::vector<unsigned int> block_component (dim+1,0);
     block_component[dim] = 1;
     DoFRenumbering::component_wise (dof_handler, block_component);
+    ii.stop();
     timer.exit_section("renumbering");
 
     timer.enter_section("setup constraints");
     {
+      Instrument ii("setup:constraints");
       constraints.clear ();
       std::vector<bool> component_mask (dim+1, true);
       component_mask[dim] = false;
@@ -604,9 +615,9 @@ namespace Step22
                                                 BoundaryValues<dim>(),
                                                 constraints,
                                                 component_mask);
+      constraints.close ();
     }
 
-    constraints.close ();
     timer.exit_section("setup constraints");
 
     // In analogy to step-20, we count the dofs
@@ -683,6 +694,8 @@ namespace Step22
     // been copied to
     // <code>sparsity_pattern</code>.
     {
+
+      Instrument ii1("setup:dsp1");
       timer.enter_section("make dsp");
       BlockDynamicSparsityPattern dsp (2,2);
 
@@ -694,8 +707,12 @@ namespace Step22
       dsp.collect_sizes();
 
       DoFTools::make_sparsity_pattern (dof_handler, dsp, constraints, false);
+      ii1.stop();
+
+
       timer.exit_section("make dsp");
       timer.enter_section("copy sp");
+      Instrument ii("setup:dsp2");
       sparsity_pattern.copy_from (dsp);
       timer.exit_section("copy sp");
     }
@@ -705,6 +722,7 @@ namespace Step22
     // created from the block
     // structure as in step-20:
     timer.enter_section("create matrix and vectors");
+    Instrument ii2("setup:matrix_and_vec");
     system_matrix.reinit (sparsity_pattern);
 
     solution.reinit (2);
@@ -1264,7 +1282,7 @@ namespace Step22
 
         //if (refinement_cycle > 0)
         {
-	  Instrument ii("refine");
+          Instrument ii("refine");
           timer.enter_section("refine");
           refine_mesh ();
           refine_mesh ();
@@ -1273,22 +1291,18 @@ namespace Step22
           timer.exit_section("refine");
         }
 
-        //timer.enter_section("setup"
-	{
-	  Instrument ii("setup_dofs");
-	  setup_dofs ();
-	}
-    
+        setup_dofs ();
+
         //timer.exit_section("setup");
 
         std::cout << "   Assembling..." << std::endl << std::flush;
         timer.enter_section("assembly");
-	{
-	      Instrument ii("assembly");
-  
-        assemble_system ();
-	}
-	
+        {
+          Instrument ii("assembly");
+
+          assemble_system ();
+        }
+
         timer.exit_section("assembly");
 
         std::cout << "   Solving..." << std::flush;
@@ -1320,21 +1334,14 @@ int main ()
       using namespace dealii;
       using namespace Step22;
       MultithreadInfo::set_thread_limit(1);
-      
 
       deallog.depth_console (0);
-
-
-
 
       Instrument ii("constructor");
       StokesProblem<2> flow_problem(1);
       ii.stop();
-      
-      flow_problem.run ();
 
-      Instrument::summary();
-      
+      flow_problem.run ();
     }
   catch (std::exception &exc)
     {
