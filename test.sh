@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TESTS="step-22 tablehandler test_assembly test_poisson test_hp"
+TESTS="test_assembly"
 sha=`cd dealii;git rev-parse HEAD`
 desc="`cd dealii;git rev-parse --short HEAD;` `cd dealii;git describe --exact-match HEAD 2>/dev/null`"
 time=`cd dealii;git show --quiet --format=%cD HEAD | head -n 1`
@@ -15,11 +16,16 @@ cd $basepath
 DIR=build
 logfile=$basepath/logs/$sha/build
 
-echo "Testing $sha - $desc" | tee $logfile 
 
+# only test sha1 that start with "a":
+if [[ $sha == a* ]];
+then
+  echo "Testing $sha - $desc" | tee $logfile 
+else
+  echo "skipping $sha";
+  exit 1
+fi
 
-
-#rm -rf $DIR
 mkdir -p $DIR
 cd $DIR
 echo hi from `pwd` >>$logfile
@@ -31,14 +37,12 @@ for test in $TESTS ; do
   cd $test
   echo "** working on $test" >>$logfile
   rm -fr CMakeCache.txt CMakeFiles Makefile
-  cmake -D DEAL_II_DIR=../install . >/dev/null 2>>$logfile
+  cmake -D DEAL_II_DIR=../install . >>$logfile 2>&1
   echo $sha >tmp
   echo $test >>tmp
   echo $desc >>tmp
   echo $time >>tmp
-  for a in {1..5}; do
-    make run 2>>$logfile | grep "|" | grep -v "no. calls" | grep -v "Total CPU time" | grep -v "Total wallclock time" >>tmp
-  done
+  make run 2>>$logfile | grep "^>" >>tmp
   cd ..
   cat $test/tmp | python render.py record >> $basepath/logs/$sha/summary
 done

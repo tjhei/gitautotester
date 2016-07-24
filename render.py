@@ -116,7 +116,7 @@ class DB:
                 $(document).ready(function() {                      
                             $('#container').highcharts({
                                 chart: {
-                type: 'line',
+type: 'line',
                 marginRight: 250,
                 marginBottom: 25,
                 zoomType: 'x'
@@ -134,7 +134,7 @@ series: [
 
             for d in sorted_series:
                 ref_value = ref[s] if s in ref else 1.0
-                v = d[1] #/ref_value*100 - 100
+                v = d[1]/ref_value*100# - 100
                 print "[Date.parse(\"{}\"), {}],".format(d[0], v)
             print "] },"
 
@@ -152,7 +152,7 @@ series: [
             },
             yAxis: {
                 title: {
-                    text: 'time (s)'
+                    text: 'perc'
                 },
                 plotLines: [{
                     value: 0,
@@ -170,6 +170,11 @@ series: [
                 }
             },
             plotOptions: {
+            line: {
+                marker: {
+                    enabled: true
+                }
+            },
                 series: {
                     cursor: 'pointer',
                     point: {
@@ -180,7 +185,7 @@ series: [
                         }
                     },
                     marker: {
-                        lineWidth: 1
+                        lineWidth: 2
                     }
                 }
             },
@@ -196,7 +201,8 @@ series: [
 
                             });
 //                      });
-                        
+
+if (0)                        
              setTimeout(function(){
 chart = $('#container').highcharts();
 chart.xAxis[0].setExtremes(Date.parse("2015-07-28T13:45:48-05:00"),chart.xAxis[0].getExtremes().dataMax); 
@@ -244,9 +250,9 @@ if whattodo=="record":
     obj['time']=time
     record=obj['record']
     for line in lines:
-        parts = line.split("|")
+        parts = line.split(" ")
         name = parts[1].strip()
-        time = parts[3].strip()[0:-1]
+        time = parts[2].strip()
         if len(name)>0:
             name = testname+":"+name
             time = float(time)
