@@ -5,6 +5,10 @@
 # Run some selected old versions (releases) and apply necessary patches before
 # doing so.
 
+cd dealii;git checkout v8.4.1;cd ..
+rm -rf build
+./test.sh
+
 cd dealii;git checkout v8.3.0;cd ..
 rm -rf build
 ./test.sh
