@@ -1,9 +1,18 @@
 #!/bin/bash
 
+# run with
+#   docker run --rm -v "$(pwd):/home/bob/tester" tjhei/dealii-bench
+
 echo "ASPECT testing - hello from script.sh"
-if [ -f /aspect-tester/runner.py ];
+
+
+if [ -f ~/tester/runner.py ];
 then
-       cd /aspect-tester; python runner.py "$@"
+    cd tester
+    python runner.py run-all
+    python render.py >index.html
+
+    #python runner.py "$@"
 else
-       echo "please mount /aspect-tester"
+       echo "please mount files into `pwd`/tester"
 fi

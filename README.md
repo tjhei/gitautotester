@@ -17,7 +17,17 @@ python render.py >index.html
 will:
 - update the deal.II repository
 - check out every revision going back X revisions (set in config.py) but only looking at merge commits
-- for each revision execute test.sh (which will compile and run the tests
+- for each revision execute test.sh (which will compile and run the tests)
+
+to run inside a docker image, first setup:
+```
+cd docker; ./make.sh; cd ..
+```
+then run:
+```
+docker run --rm -v "$(pwd):/home/bob/tester" tjhei/dealii-bench
+```
+
 
 ## Misc
 

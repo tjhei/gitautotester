@@ -1,22 +1,15 @@
-FROM tjhei/deal82
+FROM tjhei/dealii-base
 
 MAINTAINER timo.heister@gmail.com
 
-ENV HOME /root
+USER root
+
+RUN apt-get update && apt-get -qy install \
+    python valgrind python-dateutil
+
+USER bob
 WORKDIR $HOME
 
-# Set the locale
-# this is required so that ASPECT can format numbers with , separators
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8
-
-# RUN git clone https://github.com/geodynamics/aspect.git
-
 ADD script.sh $HOME/script.sh
-CMD /root/script.sh
-
-
-
+CMD /home/bob/script.sh
 
