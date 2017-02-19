@@ -12,7 +12,7 @@ index 59f3a23..da58964 100644
  
      // We then apply an initial refinement
 diff --git a/test_assembly/step-22.cc b/test_assembly/step-22.cc
-index 53ea14f..47167c3 100644
+index 53ea14f..331239f 100644
 --- a/test_assembly/step-22.cc
 +++ b/test_assembly/step-22.cc
 @@ -697,7 +697,7 @@ namespace Step22
@@ -33,3 +33,12 @@ index 53ea14f..47167c3 100644
  
  
      // We then apply an initial refinement
+@@ -1334,7 +1334,7 @@ int main ()
+     {
+       using namespace dealii;
+       using namespace Step22;
+-      MultithreadInfo::set_thread_limit(1);
++      //MultithreadInfo::set_thread_limit(1);
+ 
+       deallog.depth_console (0);
+ 
