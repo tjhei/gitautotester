@@ -10,7 +10,7 @@ if [ -f ~/tester/runner.py ];
 then
     cd tester
     python runner.py run-all
-    python render.py >index.html
+    python render.py render >index.html
 
     #python runner.py "$@"
 else

@@ -11,5 +11,6 @@ USER bob
 WORKDIR $HOME
 
 ADD script.sh $HOME/script.sh
+RUN chmod a+rwx $HOME/script.sh
 CMD /home/bob/script.sh
 
