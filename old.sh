@@ -5,6 +5,8 @@
 # Run some selected old versions (releases) and apply necessary patches before
 # doing so.
 
+cd dealii;git reset --hard -q && git clean -fd -q;cd ..
+
 cd dealii;git checkout v8.4.1;cd ..
 rm -rf build
 ./test.sh

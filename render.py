@@ -119,7 +119,7 @@ class DB:
 type: 'line',
                 marginRight: 250,
                 marginBottom: 25,
-                zoomType: 'x'
+                zoomType: 'xy'
                                 },
 
 series: [
@@ -135,6 +135,7 @@ series: [
             for d in sorted_series:
                 ref_value = ref[s] if s in ref else 1.0
                 v = d[1]/ref_value*100# - 100
+                v = d[1]
                 print "[Date.parse(\"{}\"), {}],".format(d[0], v)
             print "] },"
 
@@ -165,6 +166,7 @@ series: [
                 crosshairs: true,
                 formatter: function() {
                         return '<b>'+ this.series.name +'</b><br/>'+
+                        Math.round(this.y/100.0*ref[this.series.name]*1000.0)/1000.0 + ', ' + 
                         Math.round(this.y) + '% of ' + ref[this.series.name]
                 + ', rev ' + shas[this.x] + ' at ' + Highcharts.dateFormat('%A, %b %e, %Y', this.x);
                 }
@@ -234,7 +236,10 @@ db.load()
 whattodo = ""
 
 if len(sys.argv)<2:
-    print "usage: record <sha>|render"
+    print "usage:"
+    print "  record <sha>"
+    print "  render"
+    print "  dump"
 else:
     whattodo=sys.argv[1]
 
@@ -262,7 +267,7 @@ if whattodo=="record":
                 record[name]=min(time, record[name])
 
     db.save()
-    #print sha, record
+    print "recorded", sha
 
 if whattodo=="dump":
     db.dump()

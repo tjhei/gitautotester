@@ -26,7 +26,12 @@ cd docker; ./make.sh; cd ..
 then run:
 ```
 docker run --rm -v "$(pwd):/home/bob/tester" tjhei/dealii-bench
+docker run -it --rm -v "$(pwd):/home/bob/tester" tjhei/dealii-bench /bin/bash
 ```
+
+## old releases
+
+run ./old.sh to test old releases
 
 
 ## Misc
