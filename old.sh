@@ -16,7 +16,7 @@ rm -rf build
 ./test.sh
 
 cd dealii;git checkout v8.2.1;cd ..
-patch -R -p3 <patches/821andbefore.patch
+patch -p1 <patches/821andbefore.patch
 rm -rf build
 ./test.sh
 
