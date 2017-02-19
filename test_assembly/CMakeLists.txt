@@ -11,7 +11,7 @@ SET(TARGET_SRC
   # You can specify additional files here!
   )
 
-SET(TARGET_RUN valgrind --tool=callgrind -q --callgrind-out-file=log ./${TARGET})
+SET(TARGET_RUN valgrind --tool=callgrind -q --combine-dumps=yes --callgrind-out-file=callgrind.out ./${TARGET})
 
 # Usually, you will not need to modify anything beyond this point...
 

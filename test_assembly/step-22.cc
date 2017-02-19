@@ -695,7 +695,7 @@ namespace Step22
     // <code>sparsity_pattern</code>.
     {
 
-      Instrument ii1("setup:dsp1");
+      Instrument ii1("setup:make_sp");
       timer.enter_section("make dsp");
       BlockDynamicSparsityPattern dsp (2,2);
 
@@ -712,7 +712,7 @@ namespace Step22
 
       timer.exit_section("make dsp");
       timer.enter_section("copy sp");
-      Instrument ii("setup:dsp2");
+      Instrument ii("setup:copy_sp");
       sparsity_pattern.copy_from (dsp);
       timer.exit_section("copy sp");
     }
@@ -943,13 +943,18 @@ namespace Step22
     // different whether we want to use
     // a sparse direct solver or an
     // ILU:
+
+    if (false)
+      {
+	
     std::cout << "   Computing preconditioner..." << std::endl << std::flush;
 
     A_preconditioner
       = std_cxx11::shared_ptr<typename InnerPreconditioner<dim>::type>(new typename InnerPreconditioner<dim>::type());
     A_preconditioner->initialize (system_matrix.block(0,0),
                                   typename InnerPreconditioner<dim>::type::AdditionalData());
-
+      }
+    
   }
 
 
@@ -1285,15 +1290,11 @@ namespace Step22
           Instrument ii("refine");
           timer.enter_section("refine");
           refine_mesh ();
-          refine_mesh ();
-          refine_mesh ();
           //triangulation.refine_global(1);
           timer.exit_section("refine");
         }
 
         setup_dofs ();
-
-        //timer.exit_section("setup");
 
         std::cout << "   Assembling..." << std::endl << std::flush;
         timer.enter_section("assembly");
@@ -1305,7 +1306,7 @@ namespace Step22
 
         timer.exit_section("assembly");
 
-        std::cout << "   Solving..." << std::flush;
+        //std::cout << "   Solving..." << std::flush;
         //timer.enter_section("solver");
         //solve ();
         //timer.exit_section("solver");

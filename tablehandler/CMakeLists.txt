@@ -11,6 +11,8 @@ SET(TARGET_SRC
   # You can specify additional files here!
   )
 
+SET(TARGET_RUN valgrind --tool=callgrind -q --combine-dumps=yes --callgrind-out-file=callgrind.out ./${TARGET})
+
 # Usually, you will not need to modify anything beyond this point...
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
