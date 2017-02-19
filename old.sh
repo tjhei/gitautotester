@@ -21,10 +21,10 @@ rm -rf build
 ./test.sh
 
 # not tested:
-cd dealii;git checkout v8.1.0;cd ..
-patch -p1 <patches/810andbefore.patch
-rm -rf build
-./test.sh
+#cd dealii;git checkout v8.1.0;cd ..
+#patch -p1 <patches/810andbefore.patch
+#rm -rf build
+#./test.sh
 
 # not tested:
 #cd dealii;git checkout v8.0.0;cd ..
