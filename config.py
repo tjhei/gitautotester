@@ -17,7 +17,7 @@ github_user = "dealii"
 github_repo = "dealii"
 
 # number of tests to go back in time when doing "run-all" default 10
-n_old_tests = 180 #10
+n_old_tests = 500 #10
 
 # if a user that is_allowed() posts a comment that has
 # has_hotword(text) return True, the PR is tested
