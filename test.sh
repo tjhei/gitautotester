@@ -14,7 +14,7 @@ mkdir -p $basepath/logs/$sha
 rm -f $basepath/logs/$sha/*
 
 cd $basepath
-DIR=build
+BUILDDIR=`cd ..;mkdir -p build;cd build;pwd`
 logfile=$basepath/logs/$sha/build
 
 
@@ -27,18 +27,17 @@ else
   exit 1
 fi
 
-mkdir -p $DIR
-cd $DIR
+cd $BUILDDIR
 echo hi from `pwd` >>$logfile
 cmake -G "Ninja" -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=`pwd`/install  $basepath/dealii >>$logfile 2>&1 && nice ninja install >>$logfile 2>&1 || exit -1
 
-cd ..
+cd $basepath
 
 for test in $TESTS ; do
   cd $test
   echo "** working on $test" >>$logfile
   rm -fr CMakeCache.txt CMakeFiles Makefile
-  cmake -D DEAL_II_DIR=../build/install . >>$logfile 2>&1
+  cmake -D DEAL_II_DIR=$BUILDDIR/install . >>$logfile 2>&1
   echo $sha >tmp
   echo $test >>tmp
   echo $desc >>tmp
